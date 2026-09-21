@@ -151,11 +151,11 @@ function fmtHour(h) {
   return `${h - 12}:00 pm`;
 }
 
-function isSlotInPast(dateKey, startHour) {
+function isSlotInPast(dateKeyStr, startHour) {
   const now = new Date();
-  const todayKey = now.toISOString().slice(0, 10);
-  if (dateKey < todayKey) return true;
-  if (dateKey === todayKey && startHour <= now.getHours()) return true;
+  const todayKey = dateKey(now);
+  if (dateKeyStr < todayKey) return true;
+  if (dateKeyStr === todayKey && startHour <= now.getHours()) return true;
   return false;
 }
 
@@ -170,7 +170,10 @@ function generateSlots(dayConfig, duration, dateKeyStr) {
 }
 
 function dateKey(date) {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function getUpcomingDates() {
