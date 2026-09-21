@@ -55,10 +55,19 @@ a{text-decoration:none}
 
 .university-row{display:flex;flex-direction:column;gap:9px;align-items:center;width:100%}
 .row-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:#ddd6fe;text-transform:uppercase}
-.uni-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.uni-pill{padding:9px 18px;border-radius:20px;font-size:13px;font-weight:700;border:1.5px solid rgba(196,181,253,.3);color:#c4b5fd;transition:.2s}
-.uni-pill:hover{border-color:var(--purple-glow);background:rgba(139,92,246,.15)}
-.uni-pill.active{background:linear-gradient(135deg,#7c3aed,#9d5cf2);color:#fff;border-color:#a78bfa;box-shadow:0 4px 14px rgba(124,58,237,.4)}
+.uni-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.uni-pill{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 20px;border-radius:16px;font-size:14px;font-weight:800;border:2px solid var(--uc,rgba(196,181,253,.3));color:var(--uct,#c4b5fd);background:rgba(255,255,255,.04);transition:.25s;min-width:120px;position:relative;overflow:hidden}
+.uni-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--uc),var(--uc2));opacity:0;transition:.25s;z-index:0}
+.uni-pill>*{position:relative;z-index:1}
+.uni-pill:hover{border-color:var(--uc);transform:translateY(-2px)}
+.uni-pill:hover::before{opacity:.15}
+.uni-pill.active{border-color:var(--uc);box-shadow:0 6px 20px color-mix(in srgb,var(--uc) 45%,transparent)}
+.uni-pill.active::before{opacity:1}
+.uni-pill.active .uni-pill-full{opacity:.85}
+.uni-pill-label{font-size:15px;font-weight:900;letter-spacing:.5px}
+.uni-pill-full{font-size:9px;font-weight:600;opacity:0;max-height:0;overflow:hidden;transition:.25s}
+.uni-pill:hover .uni-pill-full,.uni-pill.active .uni-pill-full{opacity:.85;max-height:20px}
+.home-description{font-size:13px;line-height:1.6;color:#c4b5fd;max-width:480px;margin:6px 0 2px;opacity:.9}
 
 .objective-section{display:flex;flex-direction:column;gap:9px;align-items:center;width:100%;margin-top:6px}
 .objective-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}

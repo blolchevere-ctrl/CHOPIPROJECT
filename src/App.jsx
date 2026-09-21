@@ -98,7 +98,12 @@ const branches = [
   ]},
 ];
 
-const universities = ['UNALM', 'PUCP', 'UNMSM', 'UNFV'];
+const universities = [
+  { id: 'UNALM', label: 'UNALM', full: 'U. Nacional Agraria La Molina', color: '#2e7d32', color2: '#1b5e20', text: '#fff' },
+  { id: 'PUCP', label: 'PUCP', full: 'Pontificia U. Católica del Perú', color: '#0d47a1', color2: '#1565c0', text: '#fff' },
+  { id: 'UNMSM', label: 'UNMSM', full: 'U. Nacional Mayor de San Marcos', color: '#b71c1c', color2: '#c62828', text: '#fff' },
+  { id: 'UNFV', label: 'UNFV', full: 'U. Nacional Federico Villarreal', color: '#e65100', color2: '#f57c00', text: '#fff' },
+];
 const objectives = [
   { id: 'teoria', label: 'Teoría', icon: 'book' },
   { id: 'ejercicios', label: 'Resolución de Ejercicios', icon: 'pencil' },
@@ -446,7 +451,15 @@ function App() {
               <span className="row-label">Elige tu universidad:</span>
               <div className="uni-pills">
                 {universities.map((u) => (
-                  <button key={u} className={`uni-pill ${selectedUniversity === u ? 'active' : ''}`} onClick={() => setSelectedUniversity(u)}>{u}</button>
+                  <button
+                    key={u.id}
+                    className={`uni-pill ${selectedUniversity === u.id ? 'active' : ''}`}
+                    style={{ '--uc': u.color, '--uc2': u.color2, '--uct': u.text }}
+                    onClick={() => setSelectedUniversity(u.id)}
+                  >
+                    <span className="uni-pill-label">{u.label}</span>
+                    <span className="uni-pill-full">{u.full}</span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -467,6 +480,11 @@ function App() {
               <span>Ir al Árbol de Aprendizaje</span>
               <span className="cta-arrow">→</span>
             </button>
+
+            <div className="home-description">
+              Clases particulares y grupales de Matemática, Física, Química y Estadística.
+              Presencial y virtual. Reserva tu clase online y sé un monstruo de las ciencias.
+            </div>
 
             <div className="contact-quick">
               <a href="tel:+51906242512" className="quick-phone"><Icon name="phone" size={15} /> +51 906 242 512</a>
