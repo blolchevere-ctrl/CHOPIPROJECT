@@ -88,12 +88,6 @@ const objectives = [
   { id: 'ambos', label: 'Ambos', icon: 'sparkles' },
 ];
 
-const LEVELS = [
-  { id: 'basico', label: 'Básico', color: '#22c55e', short: 'B' },
-  { id: 'intermedio', label: 'Intermedio', color: '#facc15', short: 'I' },
-  { id: 'avanzado', label: 'Avanzado', color: '#ef4444', short: 'A' },
-];
-
 function Icon({ name, size = 28 }) {
   const common = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
   if (name === 'book') return <svg {...common}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /><path d="M8 6h8M8 10h7" /></svg>;
@@ -109,7 +103,6 @@ function Icon({ name, size = 28 }) {
 }
 
 const PRICE_PER_HOUR = 20;
-const STORAGE_KEY = 'chopimath_progress';
 const TEACHER_PASSWORD = 'chopi2024';
 const TEACHER_WHATSAPP = '51906242512';
 const SUPPORT_WHATSAPP = '51906242512';
@@ -131,10 +124,20 @@ function fmtHour(h) {
   return `${h - 12}:00 pm`;
 }
 
-function generateSlots(dayConfig, duration) {
+function isSlotInPast(dateKey, startHour) {
+  const now = new Date();
+  const todayKey = now.toISOString().slice(0, 10);
+  if (dateKey < todayKey) return true;
+  if (dateKey === todayKey && startHour <= now.getHours()) return true;
+  return false;
+}
+
+function generateSlots(dayConfig, duration, dateKeyStr) {
   const slots = [];
   for (let h = dayConfig.start; h + duration <= dayConfig.end; h++) {
-    slots.push({ start: h, end: h + duration, label: `${fmtHour(h)} - ${fmtHour(h + duration)}` });
+    if (!isSlotInPast(dateKeyStr, h)) {
+      slots.push({ start: h, end: h + duration, label: `${fmtHour(h)} - ${fmtHour(h + duration)}` });
+    }
   }
   return slots;
 }
@@ -178,21 +181,6 @@ function countTopics(branch) {
   return branch.categories.reduce((sum, cat) => sum + cat.topics.length, 0);
 }
 
-function topicId(branchId, catId, index) {
-  return `${branchId}-${catId}-${index}`;
-}
-
-function loadProgress() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
-}
-
-function saveProgress(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { /* ignore */ }
-}
-
 const binaryColumns = Array.from({ length: 18 }, () =>
   Array.from({ length: 24 }, () => Math.floor(Math.random() * 2)).join('')
 );
@@ -210,7 +198,6 @@ function App() {
   const [bookingDate, setBookingDate] = useState('');
   const [bookingDuration, setBookingDuration] = useState(1);
   const [bookingSlot, setBookingSlot] = useState(null);
-  const [progress, setProgress] = useState({});
   const [openPicker, setOpenPicker] = useState(null);
 
   // Booking form state
@@ -266,19 +253,7 @@ function App() {
   const bookingDay = activeBookingInfo?.day || 'Lunes';
   const agendaDay = activeAgendaInfo?.day || 'Lunes';
 
-  useEffect(() => { setProgress(loadProgress()); }, []);
-
   useEffect(() => { loadBookings(); }, [loadBookings]);
-
-  const setTopicLevel = useCallback((id, level) => {
-    setProgress((prev) => {
-      const next = { ...prev };
-      if (level === null) delete next[id];
-      else next[id] = level;
-      saveProgress(next);
-      return next;
-    });
-  }, []);
 
   const goHome = useCallback(() => {
     setView('home'); setExpandedBranch(null); setExpandedCategory(null);
@@ -313,15 +288,11 @@ function App() {
   const enterTree = () => { if (selectedObjective) transition('tree'); };
 
   const currentDayConfig = schedule.find((s) => s.day === bookingDay) || schedule[0];
-  const currentSlots = generateSlots(currentDayConfig, bookingDuration);
+  const currentSlots = generateSlots(currentDayConfig, bookingDuration, activeBookingDate);
   const agendaDayConfig = schedule.find((s) => s.day === agendaDay) || schedule[0];
-  const agendaSlots = generateSlots(agendaDayConfig, blockDuration);
+  const agendaSlots = generateSlots(agendaDayConfig, blockDuration, activeAgendaDate);
   const totalPrice = bookingDuration * PRICE_PER_HOUR;
   const bookingIsUnavailable = (slot) => overlaps(bookings, activeBookingDate, slot.start, bookingDuration, 'booking_date') || overlaps(teacherBlocks, activeBookingDate, slot.start, bookingDuration, 'block_date');
-
-  const totalTopics = branches.reduce((s, b) => s + countTopics(b), 0);
-  const masteredCount = Object.keys(progress).length;
-  const progressPct = Math.round((masteredCount / totalTopics) * 100);
 
   const handleConfirmBooking = async () => {
     setBookingError('');
@@ -414,7 +385,7 @@ function App() {
 
   const whatsappConfirmUrl = bookingSuccess && selectedTopic
     ? `https://wa.me/${TEACHER_WHATSAPP}?text=${encodeURIComponent(
-        `Hola, soy ${studentName}. Confirmo mi reserva de clase.\n\nTema: ${selectedTopic.title}\nCurso: ${selectedTopic.category} · ${selectedTopic.branch}\nUniversidad: ${selectedUniversity}\nFecha: ${activeBookingInfo?.label}\nHorario: ${bookingSlot.label}\nDuración: ${bookingDuration} hora(s)\nMonto: S/ ${totalPrice}\nModalidad: ${bookingMode === 'virtual' ? 'Virtual' : `Presencial en ${presencialDistrict}`}\nMi celular: ${studentPhone}\n\nQuisiera coordinar el pago. Una vez confirmado el pago, recibiré el link de la clase virtual.`
+        `Hola, soy ${studentName}. Confirmo mi reserva de clase.\n\nTema: ${selectedTopic.title}\nCurso: ${selectedTopic.category} · ${selectedTopic.branch}\nUniversidad: ${selectedUniversity}\nFecha: ${activeBookingInfo?.label}\nHorario: ${bookingSlot.label}\nDuración: ${bookingDuration} hora(s)\nMonto: S/ ${totalPrice}\nModalidad: ${bookingMode === 'virtual' ? 'Virtual' : `Presencial en ${presencialDistrict}`}\nMi celular: ${studentPhone}\n\nQuisiera coordinar el pago${bookingMode === 'virtual' ? '. Una vez confirmado el pago, recibirás el link para entrar a la clase virtual.' : ' y los detalles de la clase presencial.'}`
       )}`
     : '#';
 
@@ -496,10 +467,6 @@ function App() {
             <span className="sub-eyebrow">MAPA DE APRENDIZAJE · {selectedUniversity}</span>
             <h2>Árbol de Aprendizaje</h2>
           </div>
-          <div className="progress-mini">
-            <div className="progress-mini-bar"><div className="progress-mini-fill" style={{ width: `${progressPct}%` }} /></div>
-            <span className="progress-mini-text">{masteredCount}/{totalTopics} temas</span>
-          </div>
         </header>
 
         <div className="tree-canvas">
@@ -521,58 +488,21 @@ function App() {
                   <div className="branch-categories">
                     {branch.categories.map((cat, ci) => {
                       const catExpanded = expandedCategory === cat.id;
-                      const catMastered = cat.topics.filter((_, ti) => progress[topicId(branch.id, cat.id, ti)]).length;
                       return (
                         <div className={`category ${catExpanded ? 'expanded' : ''}`} key={cat.id} style={{ '--delay': `${ci * 0.05}s` }}>
                           <div className="cat-connector" />
                           <button className="category-head" style={{ '--cc': branch.color }} onClick={() => { setExpandedCategory(catExpanded ? null : cat.id); setOpenPicker(null); }}>
                             <span className="cat-title">{cat.title}</span>
-                            <span className="cat-count">{catMastered}/{cat.topics.length}</span>
+                            <span className="cat-count">{cat.topics.length} temas</span>
                             <span className="cat-expand">{catExpanded ? '−' : '+'}</span>
                           </button>
                           <div className="category-topics">
                             {cat.topics.map((topic, ti) => {
-                              const tid = topicId(branch.id, cat.id, ti);
-                              const level = progress[tid];
-                              const levelInfo = LEVELS.find((l) => l.id === level);
-                              const pickerOpen = openPicker === tid;
                               return (
                                 <div className="topic-leaf" key={ti} style={{ '--delay': `${ti * 0.04}s` }}>
-                                  <button className={`topic-node ${level ? 'marked' : ''}`} onClick={() => setSelectedTopic({ title: topic.title, branch: branch.label, category: cat.title, branchColor: branch.color })}>
+                                  <button className="topic-node" onClick={() => setSelectedTopic({ title: topic.title, branch: branch.label, category: cat.title, branchColor: branch.color })}>
                                     <span className="tn-title">{topic.title}</span>
                                   </button>
-                                  <div className="mark-area">
-                                    {pickerOpen && (
-                                      <div className="level-picker" onClick={(e) => e.stopPropagation()}>
-                                        {LEVELS.map((lvl) => (
-                                          <button key={lvl.id} className={`level-pick-btn ${level === lvl.id ? 'current' : ''}`} style={{ '--lc': lvl.color }} onClick={() => { setTopicLevel(tid, level === lvl.id ? null : lvl.id); setOpenPicker(null); }}>
-                                            <span className="level-pick-dot" style={{ background: lvl.color }} />
-                                            {lvl.label}
-                                          </button>
-                                        ))}
-                                        {level && (
-                                          <button className="level-pick-btn clear-btn" onClick={() => { setTopicLevel(tid, null); setOpenPicker(null); }}>
-                                            Quitar marca
-                                          </button>
-                                        )}
-                                      </div>
-                                    )}
-                                    <button
-                                      className={`mark-btn ${level ? 'marked' : ''} ${pickerOpen ? 'open' : ''}`}
-                                      style={level ? { '--mc': levelInfo.color } : {}}
-                                      onClick={(e) => { e.stopPropagation(); setOpenPicker(pickerOpen ? null : tid); }}
-                                      aria-label={level ? `Marcado como ${levelInfo.label}` : 'Marcar tema'}
-                                    >
-                                      {level ? (
-                                        <>
-                                          <span className="mark-check"><Icon name="check" size={14} /></span>
-                                          <span className="mark-level-tag">{levelInfo.short}</span>
-                                        </>
-                                      ) : (
-                                        <span className="mark-circle" />
-                                      )}
-                                    </button>
-                                  </div>
                                 </div>
                               );
                             })}
@@ -587,8 +517,13 @@ function App() {
           </div>
         </div>
 
+        <div className="tree-welcome-banner">
+          <p className="tree-welcome-title">¿Listo para tus clases?</p>
+          <p className="tree-welcome-text">Selecciona un curso y luego el tema que desees. ¡Realiza tu reserva y sé un monstruo de las ciencias!</p>
+        </div>
+
         <div className="tree-foot-hint">
-          <span>Toca una rama para ver sus categorías · Toca un tema para empezar una clase · Marca tu nivel de dominio con el check</span>
+          <span>Toca una rama para ver sus categorías · Toca un tema para empezar una clase</span>
         </div>
 
         <a href={`https://wa.me/${TEACHER_WHATSAPP}?text=Hola%20profe%2C%20quiero%20info%20sobre%20clases`} target="_blank" rel="noreferrer" className="whatsapp-float" aria-label="WhatsApp">
@@ -878,7 +813,10 @@ function App() {
                                 const isPaid = b.payment_status === 'pagado';
                                 const isVirtual = b.booking_mode === 'virtual';
                                 const waMessage = jitsiUrl
-                                  ? `https://wa.me/51${b.student_phone.replace(/\s/g, '')}?text=${encodeURIComponent(`Hola ${b.student_name}, te confirmo el pago de tu clase.\n\nTema: ${b.topic}\nFecha: ${d.label}\nHorario: ${fmtHour(b.start_hour)}\n\nLink de la clase virtual: ${jitsiUrl}\n\nEntra al link a la hora de la clase. ¡Nos vemos!`)}`
+                                  ? `https://wa.me/51${b.student_phone.replace(/\s/g, '')}?text=${encodeURIComponent(isVirtual
+                                      ? `Hola ${b.student_name}, te confirmo el pago de tu clase.\n\nTema: ${b.topic}\nFecha: ${d.label}\nHorario: ${fmtHour(b.start_hour)}\n\nLink de la clase virtual: ${jitsiUrl}\n\nEntra al link a la hora de la clase. ¡Nos vemos!`
+                                      : `Hola ${b.student_name}, te confirmo el pago de tu clase.\n\nTema: ${b.topic}\nFecha: ${d.label}\nHorario: ${fmtHour(b.start_hour)}\nModalidad: Presencial${b.district ? ' en ' + b.district : ''}\n\nNos vemos en la clase. ¡Gracias!`
+                                    )}`
                                   : '#';
                                 return (
                                   <div className={`cal-class-block ${isPaid ? 'paid' : 'unpaid'} ${isVirtual ? 'virtual' : 'inperson'}`} key={b.id}>
