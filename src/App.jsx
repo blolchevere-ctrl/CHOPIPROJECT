@@ -79,6 +79,23 @@ const branches = [
       { title: 'Isomería' },
     ]},
   ]},
+  { id: 'estadistica', label: 'Estadística', icon: 'σ', color: '#f472b6', categories: [
+    { id: 'descriptiva', title: 'Estadística Descriptiva', topics: [
+      { title: 'Introducción a la Estadística y Tipos de Datos' },
+      { title: 'Tablas de Frecuencia y Gráficos Estadísticos' },
+      { title: 'Medidas de Tendencia Central (Media, Mediana, Moda)' },
+      { title: 'Medidas de Dispersión (Rango, Varianza, Desviación Estándar)' },
+      { title: 'Medidas de Posición (Cuantiles, Percentiles)' },
+    ]},
+    { id: 'inferencial', title: 'Estadística Inferencial', topics: [
+      { title: 'Probabilidad Básica y Regla de Laplace' },
+      { title: 'Distribuciones de Probabilidad (Binomial, Normal)' },
+      { title: 'Teorema del Límite Central' },
+      { title: 'Estimación por Intervalos de Confianza' },
+      { title: 'Pruebas de Hipótesis (Paramétricas)' },
+      { title: 'Regresión Lineal y Correlación' },
+    ]},
+  ]},
 ];
 
 const universities = ['UNALM', 'PUCP', 'UNMSM', 'UNFV'];
@@ -102,7 +119,12 @@ function Icon({ name, size = 28 }) {
   return <svg {...common}><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8 8 0 0 1-3.4-.8L4 20l1.5-3.7A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z" /><path d="M8 12h.01M12 12h.01M16 12h.01" /></svg>;
 }
 
-const PRICE_PER_HOUR = 20;
+const PRICE_VIRTUAL = 20;
+const PRICE_PRESENCIAL = 25;
+
+function priceFor(mode) {
+  return mode === 'presencial' ? PRICE_PRESENCIAL : PRICE_VIRTUAL;
+}
 const TEACHER_PASSWORD = 'chopi2024';
 const TEACHER_WHATSAPP = '51906242512';
 const SUPPORT_WHATSAPP = '51906242512';
@@ -291,7 +313,8 @@ function App() {
   const currentSlots = generateSlots(currentDayConfig, bookingDuration, activeBookingDate);
   const agendaDayConfig = schedule.find((s) => s.day === agendaDay) || schedule[0];
   const agendaSlots = generateSlots(agendaDayConfig, blockDuration, activeAgendaDate);
-  const totalPrice = bookingDuration * PRICE_PER_HOUR;
+  const currentPrice = bookingMode ? priceFor(bookingMode) : PRICE_VIRTUAL;
+  const totalPrice = bookingDuration * currentPrice;
   const bookingIsUnavailable = (slot) => overlaps(bookings, activeBookingDate, slot.start, bookingDuration, 'booking_date') || overlaps(teacherBlocks, activeBookingDate, slot.start, bookingDuration, 'block_date');
 
   const handleConfirmBooking = async () => {
@@ -474,7 +497,10 @@ function App() {
             <div className="trunk-node"><span>INICIO</span></div>
           </div>
           <div className="tree-branches">
-            {branches.map((branch) => {
+            {branches.filter((branch) => {
+              if (selectedUniversity === 'PUCP' && (branch.id === 'fisica' || branch.id === 'quimica')) return false;
+              return true;
+            }).map((branch) => {
               const isExpanded = expandedBranch === branch.id;
               return (
                 <div className={`branch ${isExpanded ? 'expanded' : ''}`} key={branch.id}>
@@ -572,7 +598,7 @@ function App() {
             </div>
 
             <button className="modal-start-btn" onClick={() => { setBookingOpen(true); setBookingSlot(null); setBookingDate(upcomingDates[0]?.key || ''); setBookingWeekIndex(0); setBookingDuration(1); setStudentName(''); setStudentPhone(''); setBookingError(''); setBookingSuccess(false); setBookingMode(null); setPresencialDistrict(null); }}>
-              Comenzar Clase · S/ {PRICE_PER_HOUR}/hora
+              Comenzar Clase · desde S/ {PRICE_VIRTUAL}/hora
             </button>
             <p className="modal-contact-hint">¿Necesitas ayuda? <a href={`https://wa.me/${TEACHER_WHATSAPP}`} target="_blank" rel="noreferrer">Escríbeme por WhatsApp →</a></p>
           </div>
@@ -590,7 +616,7 @@ function App() {
                 <div className="modal-header">
                   <span className="modal-branch">RESERVA TU CLASE</span>
                   <h3>Elige tu horario</h3>
-                  <p className="modal-status-text">S/ {PRICE_PER_HOUR} por hora · {bookingDuration === 1 ? '1 hora' : '2 horas'} = S/ {totalPrice}</p>
+                  <p className="modal-status-text">{bookingMode ? `S/ ${currentPrice} por hora` : 'Elige modalidad para ver el precio'} · {bookingDuration === 1 ? '1 hora' : '2 horas'}{bookingMode ? ` = S/ ${totalPrice}` : ''}</p>
                 </div>
 
                 <div className="modal-section">
@@ -614,8 +640,8 @@ function App() {
                 <div className="modal-section">
                   <span className="modal-label">2. Duración</span>
                   <div className="booking-days">
-                    <button className={`booking-choice ${bookingDuration === 1 ? 'active' : ''}`} onClick={() => { setBookingDuration(1); setBookingSlot(null); setBookingError(''); }}>1 hora · S/ {PRICE_PER_HOUR}</button>
-                    <button className={`booking-choice ${bookingDuration === 2 ? 'active' : ''}`} onClick={() => { setBookingDuration(2); setBookingSlot(null); setBookingError(''); }}>2 horas · S/ {PRICE_PER_HOUR * 2}</button>
+                    <button className={`booking-choice ${bookingDuration === 1 ? 'active' : ''}`} onClick={() => { setBookingDuration(1); setBookingSlot(null); setBookingError(''); }}>1 hora{bookingMode ? ` · S/ ${currentPrice}` : ''}</button>
+                    <button className={`booking-choice ${bookingDuration === 2 ? 'active' : ''}`} onClick={() => { setBookingDuration(2); setBookingSlot(null); setBookingError(''); }}>2 horas{bookingMode ? ` · S/ ${currentPrice * 2}` : ''}</button>
                   </div>
                 </div>
 
@@ -642,8 +668,8 @@ function App() {
                 <div className="modal-section">
                   <span className="modal-label">4. Modalidad de la clase</span>
                   <div className="booking-days">
-                    <button className={`booking-choice ${bookingMode === 'presencial' ? 'active' : ''}`} onClick={() => { setBookingMode('presencial'); setBookingError(''); }}>Presencial</button>
-                    <button className={`booking-choice ${bookingMode === 'virtual' ? 'active' : ''}`} onClick={() => { setBookingMode('virtual'); setPresencialDistrict(null); setBookingError(''); }}>Virtual</button>
+                    <button className={`booking-choice ${bookingMode === 'presencial' ? 'active' : ''}`} onClick={() => { setBookingMode('presencial'); setBookingError(''); }}>Presencial · S/ {PRICE_PRESENCIAL}/hora</button>
+                    <button className={`booking-choice ${bookingMode === 'virtual' ? 'active' : ''}`} onClick={() => { setBookingMode('virtual'); setPresencialDistrict(null); setBookingError(''); }}>Virtual · S/ {PRICE_VIRTUAL}/hora</button>
                   </div>
                   {bookingMode === 'presencial' && (
                     <div className="district-selector">
@@ -813,10 +839,7 @@ function App() {
                                 const isPaid = b.payment_status === 'pagado';
                                 const isVirtual = b.booking_mode === 'virtual';
                                 const waMessage = jitsiUrl
-                                  ? `https://wa.me/51${b.student_phone.replace(/\s/g, '')}?text=${encodeURIComponent(isVirtual
-                                      ? `Hola ${b.student_name}, te confirmo el pago de tu clase.\n\nTema: ${b.topic}\nFecha: ${d.label}\nHorario: ${fmtHour(b.start_hour)}\n\nLink de la clase virtual: ${jitsiUrl}\n\nEntra al link a la hora de la clase. ¡Nos vemos!`
-                                      : `Hola ${b.student_name}, te confirmo el pago de tu clase.\n\nTema: ${b.topic}\nFecha: ${d.label}\nHorario: ${fmtHour(b.start_hour)}\nModalidad: Presencial${b.district ? ' en ' + b.district : ''}\n\nNos vemos en la clase. ¡Gracias!`
-                                    )}`
+                                  ? `https://wa.me/51${b.student_phone.replace(/\s/g, '')}?text=${encodeURIComponent(`Hola ${b.student_name}, he confirmado tu pago! Te envio la reunión: ${jitsiUrl}\n\nEntra a ese enlace el día acordado! De todas maneras si se te olvida te haré acordar por medio de whatsapp.`)}`
                                   : '#';
                                 return (
                                   <div className={`cal-class-block ${isPaid ? 'paid' : 'unpaid'} ${isVirtual ? 'virtual' : 'inperson'}`} key={b.id}>
@@ -843,7 +866,7 @@ function App() {
                                           {confirmingPayment === b.id ? 'Confirmando…' : 'Confirmar pago'}
                                         </button>
                                       )}
-                                      {isPaid && jitsiUrl && isVirtual && (
+                                      {isPaid && jitsiUrl && (
                                         <>
                                           <a className="cal-action-btn cal-join-jitsi" href={jitsiUrl} target="_blank" rel="noreferrer">
                                             Entrar a la clase
@@ -852,11 +875,6 @@ function App() {
                                             Enviar link al alumno
                                           </a>
                                         </>
-                                      )}
-                                      {isPaid && jitsiUrl && !isVirtual && (
-                                        <a className="cal-action-btn cal-join-jitsi" href={jitsiUrl} target="_blank" rel="noreferrer">
-                                          Link de respaldo
-                                        </a>
                                       )}
                                       <button className="cal-cancel-btn" onClick={() => handleCancelBooking(b.id)}>
                                         <Icon name="trash" size={14} />
