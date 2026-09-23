@@ -234,6 +234,9 @@ function App() {
   const [studentName, setStudentName] = useState('');
   const [studentPhone, setStudentPhone] = useState('');
   const [bookingError, setBookingError] = useState('');
+  const [dataConfirmed, setDataConfirmed] = useState(false);
+  const [nameTouched, setNameTouched] = useState(false);
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookings, setBookings] = useState([]);
@@ -325,10 +328,45 @@ function App() {
   const totalPrice = bookingDuration * currentPrice;
   const bookingIsUnavailable = (slot) => overlaps(bookings, activeBookingDate, slot.start, bookingDuration, 'booking_date') || overlaps(teacherBlocks, activeBookingDate, slot.start, bookingDuration, 'block_date');
 
+  const NAME_RE = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{3,60}$/;
+  const PHONE_RE = /^9\d{8}$/;
+  const TROLL_WORDS = ['admin','profesor','profe','chopi','test','troll','xD','xxx','puto','verga','pene','culo','mierda','stupid','dummy','asdf','qwerty','aaaa','bbbb','zzzz','123','000','111','999'];
+
+  const nameError = (() => {
+    const v = studentName.trim();
+    if (!v) return '';
+    if (v.length < 3) return 'El nombre es muy corto (mínimo 3 letras)';
+    if (v.length > 60) return 'El nombre es muy largo';
+    if (!NAME_RE.test(v)) return 'Solo se permiten letras y espacios';
+    const words = v.split(/\s+/).filter(Boolean);
+    if (words.length < 2) return 'Escribe tu nombre y apellido';
+    if (words.some((w) => w.length < 2)) return 'Cada palabra debe tener al menos 2 letras';
+    const lower = v.toLowerCase();
+    if (TROLL_WORDS.some((t) => lower.includes(t))) return 'Por favor escribe tu nombre real';
+    return '';
+  })();
+
+  const phoneError = (() => {
+    const v = studentPhone.replace(/[\s\-]/g, '');
+    if (!v) return '';
+    if (!/^9\d{0,8}$/.test(v.replace(/^51/, ''))) return 'El celular debe empezar con 9 y tener 9 dígitos';
+    if (!PHONE_RE.test(v.replace(/^51/, ''))) return 'El celular debe tener 9 dígitos (ej: 987654321)';
+    const digits = v.replace(/^51/, '');
+    if (/^(\d)\1{8}$/.test(digits)) return 'El celular no puede tener todos los dígitos iguales';
+    if (/^(123|987|999|000)/.test(digits)) return 'Por favor escribe tu celular real';
+    return '';
+  })();
+
+  const nameValid = studentName.trim() && !nameError;
+  const phoneValid = studentPhone.trim() && !phoneError;
+
   const handleConfirmBooking = async () => {
     setBookingError('');
     if (!studentName.trim()) { setBookingError('Por favor escribe tu nombre'); return; }
+    if (nameError) { setBookingError(nameError); return; }
     if (!studentPhone.trim()) { setBookingError('Por favor escribe tu celular'); return; }
+    if (phoneError) { setBookingError(phoneError); return; }
+    if (!dataConfirmed) { setBookingError('Confirma que tus datos son correctos para continuar'); return; }
     if (!bookingSlot) { setBookingError('Selecciona un bloque horario'); return; }
     if (!bookingMode) { setBookingError('Elige si la clase es presencial o virtual'); return; }
     if (bookingMode === 'presencial' && !presencialDistrict) { setBookingError('Selecciona un distrito para la clase presencial'); return; }
@@ -618,7 +656,7 @@ function App() {
               </div>
             </div>
 
-            <button className="modal-start-btn" onClick={() => { setBookingOpen(true); setBookingSlot(null); setBookingDate(upcomingDates[0]?.key || ''); setBookingWeekIndex(0); setBookingDuration(1); setStudentName(''); setStudentPhone(''); setBookingError(''); setBookingSuccess(false); setBookingMode(null); setPresencialDistrict(null); }}>
+            <button className="modal-start-btn" onClick={() => { setBookingOpen(true); setBookingSlot(null); setBookingDate(upcomingDates[0]?.key || ''); setBookingWeekIndex(0); setBookingDuration(1); setStudentName(''); setStudentPhone(''); setBookingError(''); setBookingSuccess(false); setBookingMode(null); setPresencialDistrict(null); setDataConfirmed(false); setNameTouched(false); setPhoneTouched(false); }}>
               Comenzar Clase · desde S/ {PRICE_VIRTUAL}/hora
             </button>
             <p className="modal-contact-hint">¿Necesitas ayuda? <a href={`https://wa.me/${TEACHER_WHATSAPP}`} target="_blank" rel="noreferrer">Escríbeme por WhatsApp →</a></p>
@@ -710,20 +748,39 @@ function App() {
                 <div className="modal-section">
                   <span className="modal-label">5. Tus datos</span>
                   <input
-                    className="form-input"
+                    className={`form-input ${nameTouched && nameError ? 'input-error' : nameValid ? 'input-ok' : ''}`}
                     type="text"
-                    placeholder="Tu nombre completo"
+                    placeholder="Tu nombre y apellido (ej: María López)"
                     value={studentName}
-                    onChange={(e) => setStudentName(e.target.value)}
+                    onChange={(e) => { setStudentName(e.target.value); setDataConfirmed(false); }}
+                    onBlur={() => setNameTouched(true)}
+                    maxLength={60}
                   />
+                  {nameTouched && nameError && <div className="field-error">{nameError}</div>}
                   <input
-                    className="form-input"
+                    className={`form-input ${phoneTouched && phoneError ? 'input-error' : phoneValid ? 'input-ok' : ''}`}
                     type="tel"
-                    placeholder="Tu celular (ej: 987 654 321)"
+                    placeholder="Tu celular (ej: 987654321)"
                     value={studentPhone}
-                    onChange={(e) => setStudentPhone(e.target.value)}
+                    onChange={(e) => { setStudentPhone(e.target.value); setDataConfirmed(false); }}
+                    onBlur={() => setPhoneTouched(true)}
+                    maxLength={11}
                   />
+                  {phoneTouched && phoneError && <div className="field-error">{phoneError}</div>}
                 </div>
+
+                {nameValid && phoneValid && (
+                  <div className={`data-confirm-box ${dataConfirmed ? 'checked' : ''}`}>
+                    <button
+                      type="button"
+                      className="data-confirm-btn"
+                      onClick={() => setDataConfirmed((v) => !v)}
+                    >
+                      <span className="data-confirm-check">{dataConfirmed && <Icon name="check" size={18} />}</span>
+                      <span>¿Tu nombre y número están correctos?</span>
+                    </button>
+                  </div>
+                )}
 
                 {bookingError && <div className="booking-error">{bookingError}</div>}
 
@@ -734,9 +791,9 @@ function App() {
                 </div>
 
                 <button
-                  className={`modal-start-btn ${(!bookingSlot || bookingLoading) ? 'disabled' : ''}`}
+                  className={`modal-start-btn ${(!bookingSlot || bookingLoading || !dataConfirmed) ? 'disabled' : ''}`}
                   onClick={handleConfirmBooking}
-                  disabled={!bookingSlot || bookingLoading}
+                  disabled={!bookingSlot || bookingLoading || !dataConfirmed}
                 >
                   {bookingLoading ? 'Reservando...' : 'Confirmar reserva'}
                 </button>
