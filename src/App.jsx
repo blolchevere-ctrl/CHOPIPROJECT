@@ -151,12 +151,17 @@ function fmtHour(h) {
   return `${h - 12}:00 pm`;
 }
 
+const MIN_BOOKING_LEAD_HOURS = 3;
+
 function isSlotInPast(dateKeyStr, startHour) {
   const now = new Date();
   const todayKey = dateKey(now);
   if (dateKeyStr < todayKey) return true;
-  if (dateKeyStr === todayKey && startHour <= now.getHours()) return true;
-  return false;
+  if (dateKeyStr > todayKey) return false;
+  const slotTime = new Date(now);
+  slotTime.setHours(startHour, 0, 0, 0);
+  const hoursUntilSlot = (slotTime - now) / 36e5;
+  return hoursUntilSlot < MIN_BOOKING_LEAD_HOURS;
 }
 
 function generateSlots(dayConfig, duration, dateKeyStr) {
@@ -656,8 +661,10 @@ function App() {
               </div>
             </div>
 
-            <button className="modal-start-btn" onClick={() => { setBookingOpen(true); setBookingSlot(null); setBookingDate(upcomingDates[0]?.key || ''); setBookingWeekIndex(0); setBookingDuration(1); setStudentName(''); setStudentPhone(''); setBookingError(''); setBookingSuccess(false); setBookingMode(null); setPresencialDistrict(null); setDataConfirmed(false); setNameTouched(false); setPhoneTouched(false); }}>
-              Comenzar Clase · desde S/ {PRICE_VIRTUAL}/hora
+            <button className="modal-start-btn rainbow-btn" onClick={() => { setBookingOpen(true); setBookingSlot(null); setBookingDate(upcomingDates[0]?.key || ''); setBookingWeekIndex(0); setBookingDuration(1); setStudentName(''); setStudentPhone(''); setBookingError(''); setBookingSuccess(false); setBookingMode(null); setPresencialDistrict(null); setDataConfirmed(false); setNameTouched(false); setPhoneTouched(false); }}>
+              <span className="rainbow-btn-line1">¡Quiero reservar mi clase!</span>
+              <span className="rainbow-btn-line2">¡Deseo ser un lobo de las ciencias!</span>
+              <span className="rainbow-btn-price">desde S/ {PRICE_VIRTUAL}/hora</span>
             </button>
             <p className="modal-contact-hint">¿Necesitas ayuda? <a href={`https://wa.me/${TEACHER_WHATSAPP}`} target="_blank" rel="noreferrer">Escríbeme por WhatsApp →</a></p>
           </div>
