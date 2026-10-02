@@ -494,10 +494,18 @@ npm run preview   # Previsualizar la compilación
 
 <div align="center">
 
+---
+
+<div align="center">
+
 ### 👨‍💻 Autor
 
-**Chopimath** · Proyecto académico — *Lenguaje de Programación II*
+**Chopimath** · Proyecto académico
+
+🐾 *Este proyecto fue hecho en honor a una mascota que se perdió, conmemorando su recuerdo a lo largo de los años, porque no muere aquel a quien jamás se olvida.* 🐾
 
 Hecho con ❤️, React y Supabase
+
+</div>
 
 </div>
