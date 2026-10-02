@@ -35,11 +35,12 @@ a{text-decoration:none}
 .topbar-left-spacer{flex:1}
 .topbar-right{display:flex;align-items:center;gap:14px}
 
-.binary-rain{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:flex-start;pointer-events:none;z-index:0;opacity:.15;overflow:hidden}
-.binary-rain-col{display:flex;flex-direction:column;gap:1px;min-width:10px;font-family:var(--mono);font-size:13px;font-weight:700;line-height:1.18;color:#8b5cf6;animation:bin-rain-fall linear infinite;white-space:pre;text-shadow:0 0 5px rgba(139,92,246,.6),0 0 12px rgba(124,58,237,.35)}
-.binary-rain-col:nth-child(3n){color:#c4b5fd;text-shadow:0 0 6px rgba(196,181,253,.6),0 0 14px rgba(167,139,250,.35)}
-.binary-rain-col:nth-child(4n){color:#7c3aed;text-shadow:0 0 5px rgba(124,58,237,.6),0 0 12px rgba(109,40,217,.4)}
-@keyframes bin-rain-fall{0%{transform:translateY(-110%);opacity:0}8%{opacity:1}82%{opacity:1}100%{transform:translateY(110vh);opacity:0}}
+.formula-rain{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:flex-start;pointer-events:none;z-index:0;opacity:.36;overflow:hidden}
+.formula-rain-col{display:block;min-width:22px;margin-top:-12%;font-family:var(--mono);font-size:12px;font-weight:500;line-height:1.2;letter-spacing:-.4px;white-space:nowrap;animation:formula-fall linear infinite}
+.formula-routine{color:color-mix(in srgb,var(--uni-accent) 78%,#fff);font-size:12px;text-shadow:0 0 8px color-mix(in srgb,var(--uni-color) 65%,transparent)}
+.formula-medium{color:#d7ccef;font-size:13px;text-shadow:0 0 9px color-mix(in srgb,var(--uni-accent) 45%,transparent)}
+.formula-complex{color:#fff;font-size:14px;font-weight:600;text-shadow:0 0 8px color-mix(in srgb,var(--uni-accent) 70%,transparent),0 0 16px color-mix(in srgb,var(--uni-color) 40%,transparent)}
+@keyframes formula-fall{0%{transform:translateY(-8vh) rotate(-2deg);opacity:0}10%{opacity:.7}50%{opacity:.42}88%{opacity:.32}100%{transform:translateY(118vh) rotate(2deg);opacity:0}}
 .teacher-access-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:rgba(139,92,246,.15);border:1px solid rgba(196,181,253,.2);font-size:11px;font-weight:600;color:#c4b5fd;transition:.2s}
 .teacher-access-btn:hover{background:rgba(139,92,246,.28);border-color:rgba(167,139,250,.4)}
 .payment-logo{height:38px;display:flex;align-items:center;justify-content:center;border-radius:12px;padding:5px 10px;box-shadow:0 8px 20px rgba(11,5,30,.22);transition:transform .2s,box-shadow .2s}

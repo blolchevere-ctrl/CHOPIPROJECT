@@ -219,9 +219,26 @@ function countTopics(branch) {
   return branch.categories.reduce((sum, cat) => sum + cat.topics.length, 0);
 }
 
-const binaryColumns = Array.from({ length: 18 }, () =>
-  Array.from({ length: 24 }, () => Math.floor(Math.random() * 2)).join('')
-);
+const formulaColumns = [
+  { value: 'x² + y² = r²', level: 'routine' },
+  { value: '∫₀¹ xⁿ dx = 1/(n+1)', level: 'medium' },
+  { value: 'eⁱᵖ + 1 = 0', level: 'complex' },
+  { value: 'a² + b² = c²', level: 'routine' },
+  { value: '∑ᵢ₌₁ⁿ i = n(n+1)/2', level: 'medium' },
+  { value: '∂²u/∂t² = c²∇²u', level: 'complex' },
+  { value: 'y = mx + b', level: 'routine' },
+  { value: 'limₓ→₀ sin(x)/x = 1', level: 'medium' },
+  { value: '∮∂Ω F·dr = ∬Ω curl(F)dA', level: 'complex' },
+  { value: 'A = πr²', level: 'routine' },
+  { value: 'σ = √(Σ(xᵢ−μ)²/n)', level: 'medium' },
+  { value: '∇·E = ρ/ε₀', level: 'complex' },
+  { value: 'v = d/t', level: 'routine' },
+  { value: 'P(A∩B) = P(A)P(B|A)', level: 'medium' },
+  { value: 'det(A−λI) = 0', level: 'complex' },
+  { value: 'F = ma', level: 'routine' },
+  { value: 'logₐ(xy) = logₐx + logₐy', level: 'medium' },
+  { value: '∮γ ω = ∬Σ dω', level: 'complex' },
+];
 
 function App() {
   const [view, setView] = useState('home');
@@ -474,7 +491,7 @@ function App() {
         <span className="orb orb1" />
         <span className="orb orb2" />
         <span className="orb orb3" />
-        <div className="binary-rain" aria-hidden="true">{binaryColumns.map((col, i) => <span key={i} className="binary-rain-col" style={{ animationDelay: `${(i % 10) * 0.4}s`, animationDuration: `${4 + (i % 6)}s` }}>{col}</span>)}</div>
+        <div className="formula-rain" aria-hidden="true">{formulaColumns.map((formula, i) => <span key={i} className={`formula-rain-col formula-${formula.level}`} style={{ animationDelay: `${(i % 9) * 1.4}s`, animationDuration: `${19 + (i % 7) * 2}s` }}>{formula.value}</span>)}</div>
       </div>
 
       {/* HOME */}
