@@ -99,10 +99,13 @@ const branches = [
 ];
 
 const universities = [
-  { id: 'UNALM', label: 'UNALM', full: 'U. Nacional Agraria La Molina', color: '#2e7d32', color2: '#1b5e20', text: '#fff' },
-  { id: 'PUCP', label: 'PUCP', full: 'Pontificia U. Católica del Perú', color: '#0d47a1', color2: '#1565c0', text: '#fff' },
-  { id: 'UNMSM', label: 'UNMSM', full: 'U. Nacional Mayor de San Marcos', color: '#b71c1c', color2: '#c62828', text: '#fff' },
-  { id: 'UNFV', label: 'UNFV', full: 'U. Nacional Federico Villarreal', color: '#e65100', color2: '#f57c00', text: '#fff' },
+  { id: 'UNALM', label: 'UNALM', full: 'U. Nacional Agraria La Molina', color: '#2e7d32', color2: '#1b5e20', accent: '#66bb6a', text: '#fff' },
+  { id: 'PUCP', label: 'PUCP', full: 'Pontificia U. Católica del Perú', color: '#0d47a1', color2: '#1565c0', accent: '#42a5f5', text: '#fff' },
+  { id: 'UNMSM', label: 'UNMSM', full: 'U. Nacional Mayor de San Marcos', color: '#b71c1c', color2: '#c62828', accent: '#ef5350', text: '#fff' },
+  { id: 'UNFV', label: 'UNFV', full: 'U. Nacional Federico Villarreal', color: '#e65100', color2: '#f57c00', accent: '#ffa726', text: '#fff' },
+  { id: 'ULIMA', label: 'U Lima', full: 'U. de Lima', color: '#1565c0', color2: '#0d47a1', accent: '#42a5f5', text: '#fff' },
+  { id: 'UPC', label: 'UPC', full: 'U. Peruana de Ciencias Aplicadas', color: '#c62828', color2: '#b71c1c', accent: '#ef5350', text: '#fff' },
+  { id: 'RPALMA', label: 'Ricardo Palma', full: 'U. Ricardo Palma', color: '#6a1b9a', color2: '#4a148c', accent: '#ba68c8', text: '#fff' },
 ];
 const objectives = [
   { id: 'teoria', label: 'Teoría', icon: 'book' },
@@ -224,6 +227,7 @@ function App() {
   const [view, setView] = useState('home');
   const [selectedObjective, setSelectedObjective] = useState(null);
   const [selectedUniversity, setSelectedUniversity] = useState('UNALM');
+  const activeUni = universities.find((u) => u.id === selectedUniversity) || universities[0];
   const [expandedBranch, setExpandedBranch] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
@@ -464,7 +468,8 @@ function App() {
     : '#';
 
   return (
-    <div className={`app view-${view}`}>
+    <div className={`app view-${view}`} style={{ '--uni-color': activeUni.color, '--uni-color2': activeUni.color2, '--uni-accent': activeUni.accent }}>
+      <div className="uni-watermark" aria-hidden="true">{activeUni.label}</div>
       <div className="bg-decor">
         <span className="orb orb1" />
         <span className="orb orb2" />
@@ -503,6 +508,7 @@ function App() {
                     style={{ '--uc': u.color, '--uc2': u.color2, '--uct': u.text }}
                     onClick={() => setSelectedUniversity(u.id)}
                   >
+                    {selectedUniversity === u.id && <span className="uni-pill-check">✓</span>}
                     <span className="uni-pill-label">{u.label}</span>
                     <span className="uni-pill-full">{u.full}</span>
                   </button>
@@ -551,7 +557,7 @@ function App() {
         <header className="sub-header">
           <button className="back-btn" onClick={goHome}><span>←</span> Volver</button>
           <div className="sub-title">
-            <span className="sub-eyebrow">MAPA DE APRENDIZAJE · {selectedUniversity}</span>
+            <span className="sub-eyebrow">MAPA DE APRENDIZAJE · {activeUni.full.toUpperCase()}</span>
             <h2>Árbol de Aprendizaje</h2>
           </div>
         </header>
