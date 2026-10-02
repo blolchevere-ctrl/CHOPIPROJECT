@@ -99,13 +99,13 @@ const branches = [
 ];
 
 const universities = [
-  { id: 'UNALM', label: 'UNALM', full: 'U. Nacional Agraria La Molina', color: '#2e7d32', color2: '#1b5e20', accent: '#66bb6a', text: '#fff' },
-  { id: 'PUCP', label: 'PUCP', full: 'Pontificia U. Católica del Perú', color: '#0d47a1', color2: '#1565c0', accent: '#42a5f5', text: '#fff' },
-  { id: 'UNMSM', label: 'UNMSM', full: 'U. Nacional Mayor de San Marcos', color: '#b71c1c', color2: '#c62828', accent: '#ef5350', text: '#fff' },
-  { id: 'UNFV', label: 'UNFV', full: 'U. Nacional Federico Villarreal', color: '#e65100', color2: '#f57c00', accent: '#ffa726', text: '#fff' },
-  { id: 'ULIMA', label: 'U Lima', full: 'U. de Lima', color: '#1565c0', color2: '#0d47a1', accent: '#42a5f5', text: '#fff' },
-  { id: 'UPC', label: 'UPC', full: 'U. Peruana de Ciencias Aplicadas', color: '#c62828', color2: '#b71c1c', accent: '#ef5350', text: '#fff' },
-  { id: 'RPALMA', label: 'Ricardo Palma', full: 'U. Ricardo Palma', color: '#6a1b9a', color2: '#4a148c', accent: '#ba68c8', text: '#fff' },
+  { id: 'UNALM', label: 'UNALM', mark: 'UNALM', full: 'U. Nacional Agraria La Molina', tagline: 'Ciencia, campo y futuro', color: '#2e7d32', color2: '#1b5e20', accent: '#66bb6a', text: '#fff' },
+  { id: 'PUCP', label: 'PUCP', mark: 'PUCP', full: 'Pontificia U. Católica del Perú', tagline: 'Excelencia que inspira', color: '#0d47a1', color2: '#1565c0', accent: '#42a5f5', text: '#fff' },
+  { id: 'UNMSM', label: 'UNMSM', mark: 'UNMSM', full: 'U. Nacional Mayor de San Marcos', tagline: 'La decana de América', color: '#b71c1c', color2: '#c62828', accent: '#ef5350', text: '#fff' },
+  { id: 'UNFV', label: 'UNFV', mark: 'UNFV', full: 'U. Nacional Federico Villarreal', tagline: 'Formación con carácter', color: '#f4511e', color2: '#e65100', accent: '#ffb74d', text: '#fff' },
+  { id: 'ULIMA', label: 'U Lima', mark: 'UL', full: 'U. de Lima', tagline: 'Ideas que transforman', color: '#f57c00', color2: '#e65100', accent: '#ffcc80', text: '#fff', markText: '#fff' },
+  { id: 'UPC', label: 'UPC', mark: 'UPC', full: 'U. Peruana de Ciencias Aplicadas', tagline: 'Transforma tu mundo', color: '#c62828', color2: '#b71c1c', accent: '#ef5350', text: '#fff' },
+  { id: 'RPALMA', label: 'Ricardo Palma', mark: 'URP', full: 'U. Ricardo Palma', tagline: 'Universidad verde y creativa', color: '#2e7d32', color2: '#1b5e20', accent: '#81c784', text: '#fff' },
 ];
 const objectives = [
   { id: 'teoria', label: 'Teoría', icon: 'book' },
@@ -507,13 +507,25 @@ function App() {
                     className={`uni-pill ${selectedUniversity === u.id ? 'active' : ''}`}
                     style={{ '--uc': u.color, '--uc2': u.color2, '--uct': u.text }}
                     onClick={() => setSelectedUniversity(u.id)}
+                    aria-pressed={selectedUniversity === u.id}
                   >
                     {selectedUniversity === u.id && <span className="uni-pill-check">✓</span>}
+                    <span className="uni-pill-logo" style={{ '--logo-text': u.markText || '#fff' }}>{u.mark}</span>
                     <span className="uni-pill-label">{u.label}</span>
                     <span className="uni-pill-full">{u.full}</span>
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="uni-showcase" style={{ '--showcase-color': activeUni.color, '--showcase-color2': activeUni.color2, '--showcase-accent': activeUni.accent }}>
+              <div className="uni-showcase-logo">{activeUni.mark}</div>
+              <div className="uni-showcase-copy">
+                <span className="uni-showcase-kicker">Tu ruta de aprendizaje</span>
+                <strong>{activeUni.full}</strong>
+                <span>{activeUni.tagline}</span>
+              </div>
+              <span className="uni-showcase-spark">✦</span>
             </div>
 
             <div className="objective-section">
