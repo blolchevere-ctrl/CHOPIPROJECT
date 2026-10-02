@@ -491,7 +491,7 @@ function App() {
         <span className="orb orb1" />
         <span className="orb orb2" />
         <span className="orb orb3" />
-        <div className="formula-rain" aria-hidden="true">{formulaColumns.map((formula, i) => <span key={i} className={`formula-rain-col formula-${formula.level}`} style={{ animationDelay: `${(i % 9) * 1.4}s`, animationDuration: `${19 + (i % 7) * 2}s` }}>{formula.value}</span>)}</div>
+        <div className="formula-rain" aria-hidden="true">{formulaColumns.map((formula, i) => <span key={i} className={`formula-rain-col formula-${formula.level}`} style={{ animationDelay: `-${3 + (i % 9) * 1.2}s`, animationDuration: `${15 + (i % 7) * 1.6}s` }}>{formula.value}</span>)}</div>
       </div>
 
       {/* HOME */}
