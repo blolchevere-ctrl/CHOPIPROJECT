@@ -498,7 +498,12 @@ function App() {
       {/* HOME */}
       <section className={`screen home-screen ${view === 'home' && !teacherView ? 'show' : 'hide'}`}>
         <header className="topbar">
-          <div className="topbar-left-spacer" />
+          <div className="topbar-left">
+            <button className="no-touch-btn" onClick={() => transition('vault')} aria-label="Zona restringida">
+              <span className="no-touch-icon">⚠</span>
+              <span className="no-touch-text">NO TOCAR</span>
+            </button>
+          </div>
           <div className="topbar-right">
             <button className="teacher-access-btn" onClick={() => setTeacherView(true)} aria-label="Agenda del profesor">
               <Icon name="lock" size={16} /> Agenda
@@ -522,12 +527,12 @@ function App() {
                 {universities.map((u) => (
                   <button
                     key={u.id}
-                    className={`uni-pill uni-anim-${u.id.toLowerCase()} ${selectedUniversity === u.id ? 'active' : ''}`}
+                    className={`uni-pill ${selectedUniversity === u.id ? 'active' : ''}`}
                     style={{ '--uc': u.color, '--uc2': u.color2, '--uaccent': u.accent }}
                     onClick={() => setSelectedUniversity(u.id)}
                     aria-pressed={selectedUniversity === u.id}
                   >
-                    <span className="uni-pill-bar" />
+                    <span className="uni-pill-ripple" />
                     <span className="uni-pill-label">{u.label}</span>
                   </button>
                 ))}
@@ -654,6 +659,24 @@ function App() {
           <span className="wa-icon"><Icon name="chat" size={20} /></span>
           <span className="wa-text">¡Habla con un tutor!</span>
         </a>
+      </section>
+
+      {/* VAULT (NO TOCAR) */}
+      <section className={`screen vault-screen ${view === 'vault' && !teacherView ? 'show' : 'hide'}`}>
+        <header className="sub-header">
+          <button className="back-btn" onClick={goHome}><span>←</span> Volver</button>
+          <div className="sub-title">
+            <span className="sub-eyebrow">ZONA RESTRINGIDA</span>
+            <h2>Material, Juegos y Problemas</h2>
+          </div>
+        </header>
+        <div className="vault-body">
+          <div className="vault-placeholder">
+            <span className="vault-emoji">📂</span>
+            <p className="vault-title">Próximamente</p>
+            <p className="vault-sub">Aquí se subirá el material, juegos y problemas.</p>
+          </div>
+        </div>
       </section>
 
       {/* TRANSITION */}
