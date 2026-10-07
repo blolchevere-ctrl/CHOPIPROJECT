@@ -522,15 +522,13 @@ function App() {
                 {universities.map((u) => (
                   <button
                     key={u.id}
-                    className={`uni-pill ${selectedUniversity === u.id ? 'active' : ''}`}
-                    style={{ '--uc': u.color, '--uc2': u.color2, '--uct': u.text }}
+                    className={`uni-pill uni-anim-${u.id.toLowerCase()} ${selectedUniversity === u.id ? 'active' : ''}`}
+                    style={{ '--uc': u.color, '--uc2': u.color2, '--uaccent': u.accent }}
                     onClick={() => setSelectedUniversity(u.id)}
                     aria-pressed={selectedUniversity === u.id}
                   >
-                    {selectedUniversity === u.id && <span className="uni-pill-check">✓</span>}
-                    <span className="uni-pill-logo" style={{ '--logo-text': u.markText || '#fff' }}>{u.mark}</span>
+                    <span className="uni-pill-bar" />
                     <span className="uni-pill-label">{u.label}</span>
-                    <span className="uni-pill-full">{u.full}</span>
                   </button>
                 ))}
               </div>

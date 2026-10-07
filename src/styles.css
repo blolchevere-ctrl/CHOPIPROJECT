@@ -61,21 +61,32 @@ a{text-decoration:none}
 
 .university-row{display:flex;flex-direction:column;gap:9px;align-items:center;width:100%}
 .row-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:#ddd6fe;text-transform:uppercase}
-.uni-pills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;justify-content:center}
-.uni-pill{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;width:100%;min-width:0;min-height:58px;padding:9px 10px;border-radius:13px;font-size:14px;font-weight:800;border:1px solid color-mix(in srgb,var(--uc) 70%,transparent);color:var(--uct,#c4b5fd);background:rgba(255,255,255,.055);transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden;backdrop-filter:blur(10px);text-align:left}
-.uni-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--uc),var(--uc2));opacity:0;transition:.25s;z-index:0}
-.uni-pill>*{position:relative;z-index:1}
-.uni-pill:hover{border-color:var(--uc);transform:translateY(-2px)}
-.uni-pill:hover::before{opacity:.15}
-.uni-pill.active{border-color:var(--uc);box-shadow:0 10px 28px color-mix(in srgb,var(--uc) 45%,transparent);transform:translateY(-3px)}
-.uni-pill.active::before{opacity:1}
-.uni-pill.active .uni-pill-full{opacity:.85}
-.uni-pill-check{position:absolute;top:6px;right:8px;font-size:10px;font-weight:900;color:#fff;z-index:2;opacity:.9}
-.uni-pill-logo{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:linear-gradient(145deg,var(--uc),var(--uc2));border:1px solid rgba(255,255,255,.78);color:var(--logo-text,#fff);font-size:7px;font-weight:900;letter-spacing:-.3px;box-shadow:0 4px 10px color-mix(in srgb,var(--uc) 35%,transparent);transition:transform .25s,background .25s}
-.uni-pill:hover .uni-pill-logo,.uni-pill.active .uni-pill-logo{transform:scale(1.06)}
-.uni-pill-label{font-size:11px;font-weight:900;letter-spacing:.1px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.uni-pill-full{font-size:9px;font-weight:600;opacity:0;max-height:0;overflow:hidden;transition:.25s}
-.uni-pill:hover .uni-pill-full,.uni-pill.active .uni-pill-full{opacity:.85;max-height:20px}
+.uni-pills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%}
+.uni-pill{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:46px;padding:10px 8px;border-radius:12px;font-size:12px;font-weight:800;border:2px solid transparent;color:#fff;background:linear-gradient(140deg,var(--uc),var(--uc2));transition:transform .25s,box-shadow .25s,filter .25s;position:relative;overflow:hidden;letter-spacing:.2px;text-align:center;line-height:1.1;text-shadow:0 1px 3px rgba(0,0,0,.45);cursor:pointer}
+.uni-pill::after{content:'';position:absolute;inset:0;background:linear-gradient(170deg,rgba(255,255,255,.22),transparent 55%);pointer-events:none}
+.uni-pill:hover{transform:translateY(-2px);box-shadow:0 8px 22px color-mix(in srgb,var(--uc) 55%,transparent);filter:brightness(1.08)}
+.uni-pill.active{border-color:#fff;box-shadow:0 10px 28px color-mix(in srgb,var(--uc) 65%,transparent);transform:translateY(-3px) scale(1.02)}
+.uni-pill-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--uaccent,#fff);opacity:0;transition:opacity .25s}
+.uni-pill.active .uni-pill-bar{opacity:.95}
+.uni-pill-label{position:relative;z-index:1}
+
+/* ===== Per-university selected animations ===== */
+.uni-anim-unalm.active{animation:uni-leaf 2.5s ease-in-out infinite}
+@keyframes uni-leaf{0%,100%{box-shadow:0 10px 28px rgba(46,125,50,.65)}50%{box-shadow:0 10px 34px rgba(102,187,106,.85),0 0 18px rgba(102,187,106,.4)}}
+.uni-anim-pucp.active{animation:uni-pulse 2.5s ease-in-out infinite}
+@keyframes uni-pulse{0%,100%{box-shadow:0 10px 28px rgba(13,71,161,.65)}50%{box-shadow:0 10px 36px rgba(66,165,245,.85),0 0 16px rgba(66,165,245,.4)}}
+.uni-anim-unmsm.active{animation:uni-flame 2.5s ease-in-out infinite}
+@keyframes uni-flame{0%,100%{box-shadow:0 10px 28px rgba(183,28,28,.65)}50%{box-shadow:0 10px 36px rgba(239,83,80,.85),0 0 16px rgba(239,83,80,.4)}}
+.uni-anim-unfv.active{animation:uni-spark 2.5s ease-in-out infinite}
+@keyframes uni-spark{0%,100%{box-shadow:0 10px 28px rgba(244,81,30,.65)}50%{box-shadow:0 10px 36px rgba(255,183,77,.85),0 0 16px rgba(255,183,77,.4)}}
+.uni-anim-ulima.active{animation:uni-glow 2.5s ease-in-out infinite}
+@keyframes uni-glow{0%,100%{box-shadow:0 10px 28px rgba(245,124,0,.65)}50%{box-shadow:0 10px 36px rgba(255,204,128,.85),0 0 16px rgba(255,204,128,.4)}}
+.uni-anim-upc.active{animation:uni-beat 2.5s ease-in-out infinite}
+@keyframes uni-beat{0%,100%{box-shadow:0 10px 28px rgba(198,40,40,.65)}50%{box-shadow:0 10px 36px rgba(239,83,80,.85),0 0 16px rgba(239,83,80,.4)}}
+.uni-anim-rpalma.active{animation:uni-wave 2.5s ease-in-out infinite}
+@keyframes uni-wave{0%,100%{box-shadow:0 10px 28px rgba(46,125,50,.65)}50%{box-shadow:0 10px 36px rgba(129,199,132,.85),0 0 16px rgba(129,199,132,.4)}}
+.uni-anim-cientifica.active{animation:uni-ripple 2.5s ease-in-out infinite}
+@keyframes uni-ripple{0%,100%{box-shadow:0 10px 28px rgba(0,121,107,.65)}50%{box-shadow:0 10px 36px rgba(77,182,172,.85),0 0 16px rgba(77,182,172,.4)}}
 .uni-showcase{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;border-radius:22px;background:linear-gradient(110deg,color-mix(in srgb,var(--showcase-color) 28%,#171127),rgba(255,255,255,.055));border:1px solid color-mix(in srgb,var(--showcase-accent) 45%,transparent);box-shadow:0 14px 35px rgba(5,2,18,.22);text-align:left;animation:showcase-in .35s ease;transition:background .4s,border-color .4s}
 .uni-showcase-logo{display:grid;place-items:center;width:58px;height:58px;flex-shrink:0;border-radius:18px;background:linear-gradient(145deg,var(--showcase-color),var(--showcase-color2));border:2px solid rgba(255,255,255,.75);color:#fff;font-size:11px;font-weight:900;letter-spacing:-.5px;box-shadow:0 8px 20px color-mix(in srgb,var(--showcase-color) 45%,transparent)}
 .uni-showcase-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -405,10 +416,7 @@ a{text-decoration:none}
 @media(max-width:600px){
   .screen{padding:0 16px}
   .uni-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-  .uni-pill{min-height:52px;padding:8px 9px}
-  .uni-pill-logo{width:27px;height:27px;flex-basis:27px;font-size:7px}
-  .uni-pill-label{font-size:10px}
-  .uni-pill-full{display:none}
+  .uni-pill{min-height:42px;padding:8px 6px;font-size:11px}
   .uni-showcase{padding:12px}
   .uni-showcase-logo{width:50px;height:50px;border-radius:15px}
   .uni-showcase-copy strong{font-size:12px}
