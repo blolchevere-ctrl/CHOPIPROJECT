@@ -106,6 +106,7 @@ const universities = [
   { id: 'ULIMA', label: 'U Lima', mark: 'UL', full: 'U. de Lima', tagline: 'Ideas que transforman', color: '#f57c00', color2: '#e65100', accent: '#ffcc80', text: '#fff', markText: '#fff' },
   { id: 'UPC', label: 'UPC', mark: 'UPC', full: 'U. Peruana de Ciencias Aplicadas', tagline: 'Transforma tu mundo', color: '#c62828', color2: '#b71c1c', accent: '#ef5350', text: '#fff' },
   { id: 'RPALMA', label: 'Ricardo Palma', mark: 'URP', full: 'U. Ricardo Palma', tagline: 'Universidad verde y creativa', color: '#2e7d32', color2: '#1b5e20', accent: '#81c784', text: '#fff' },
+  { id: 'CIENTIFICA', label: 'Científica', mark: 'UCSUR', full: 'U. Científica del Sur', tagline: 'Ciencia para transformar', color: '#00796b', color2: '#004d40', accent: '#4db6ac', text: '#fff' },
 ];
 const objectives = [
   { id: 'teoria', label: 'Teoría', icon: 'book' },
@@ -491,7 +492,7 @@ function App() {
         <span className="orb orb1" />
         <span className="orb orb2" />
         <span className="orb orb3" />
-        <div className="formula-rain" aria-hidden="true">{formulaColumns.map((formula, i) => <span key={i} className={`formula-rain-col formula-${formula.level}`} style={{ animationDelay: `-${3 + (i % 9) * 1.2}s`, animationDuration: `${15 + (i % 7) * 1.6}s` }}>{formula.value}</span>)}</div>
+        <div className="formula-rain" aria-hidden="true">{formulaColumns.map((formula, i) => <span key={i} className={`formula-rain-col formula-${formula.level}`} style={{ animationDelay: `-${3 + (i % 9) * 1.2}s`, animationDuration: `${13 + (i % 7) * 1.5}s` }}>{formula.value}</span>)}</div>
       </div>
 
       {/* HOME */}

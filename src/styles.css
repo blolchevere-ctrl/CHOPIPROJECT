@@ -61,8 +61,8 @@ a{text-decoration:none}
 
 .university-row{display:flex;flex-direction:column;gap:9px;align-items:center;width:100%}
 .row-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:#ddd6fe;text-transform:uppercase}
-.uni-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.uni-pill{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 18px 11px;border-radius:18px;font-size:14px;font-weight:800;border:1px solid color-mix(in srgb,var(--uc) 70%,transparent);color:var(--uct,#c4b5fd);background:rgba(255,255,255,.055);transition:transform .25s,box-shadow .25s,border-color .25s;min-width:112px;position:relative;overflow:hidden;backdrop-filter:blur(10px)}
+.uni-pills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;justify-content:center}
+.uni-pill{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;width:100%;min-width:0;min-height:58px;padding:9px 10px;border-radius:13px;font-size:14px;font-weight:800;border:1px solid color-mix(in srgb,var(--uc) 70%,transparent);color:var(--uct,#c4b5fd);background:rgba(255,255,255,.055);transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden;backdrop-filter:blur(10px);text-align:left}
 .uni-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--uc),var(--uc2));opacity:0;transition:.25s;z-index:0}
 .uni-pill>*{position:relative;z-index:1}
 .uni-pill:hover{border-color:var(--uc);transform:translateY(-2px)}
@@ -71,9 +71,9 @@ a{text-decoration:none}
 .uni-pill.active::before{opacity:1}
 .uni-pill.active .uni-pill-full{opacity:.85}
 .uni-pill-check{position:absolute;top:6px;right:8px;font-size:10px;font-weight:900;color:#fff;z-index:2;opacity:.9}
-.uni-pill-logo{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--uc),var(--uc2));border:2px solid rgba(255,255,255,.78);color:var(--logo-text,#fff);font-size:9px;font-weight:900;letter-spacing:-.3px;box-shadow:0 5px 14px color-mix(in srgb,var(--uc) 35%,transparent);transition:transform .25s,background .25s}
-.uni-pill:hover .uni-pill-logo,.uni-pill.active .uni-pill-logo{transform:rotate(-5deg) scale(1.08)}
-.uni-pill-label{font-size:13px;font-weight:900;letter-spacing:.25px}
+.uni-pill-logo{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:linear-gradient(145deg,var(--uc),var(--uc2));border:1px solid rgba(255,255,255,.78);color:var(--logo-text,#fff);font-size:7px;font-weight:900;letter-spacing:-.3px;box-shadow:0 4px 10px color-mix(in srgb,var(--uc) 35%,transparent);transition:transform .25s,background .25s}
+.uni-pill:hover .uni-pill-logo,.uni-pill.active .uni-pill-logo{transform:scale(1.06)}
+.uni-pill-label{font-size:11px;font-weight:900;letter-spacing:.1px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .uni-pill-full{font-size:9px;font-weight:600;opacity:0;max-height:0;overflow:hidden;transition:.25s}
 .uni-pill:hover .uni-pill-full,.uni-pill.active .uni-pill-full{opacity:.85;max-height:20px}
 .uni-showcase{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;border-radius:22px;background:linear-gradient(110deg,color-mix(in srgb,var(--showcase-color) 28%,#171127),rgba(255,255,255,.055));border:1px solid color-mix(in srgb,var(--showcase-accent) 45%,transparent);box-shadow:0 14px 35px rgba(5,2,18,.22);text-align:left;animation:showcase-in .35s ease;transition:background .4s,border-color .4s}
@@ -404,10 +404,11 @@ a{text-decoration:none}
 }
 @media(max-width:600px){
   .screen{padding:0 16px}
-  .uni-pills{gap:8px}
-  .uni-pill{min-width:calc(33.333% - 6px);padding:9px 5px}
-  .uni-pill-logo{width:36px;height:36px;font-size:8px}
-  .uni-pill-label{font-size:11px}
+  .uni-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .uni-pill{min-height:52px;padding:8px 9px}
+  .uni-pill-logo{width:27px;height:27px;flex-basis:27px;font-size:7px}
+  .uni-pill-label{font-size:10px}
+  .uni-pill-full{display:none}
   .uni-showcase{padding:12px}
   .uni-showcase-logo{width:50px;height:50px;border-radius:15px}
   .uni-showcase-copy strong{font-size:12px}
