@@ -500,9 +500,8 @@ function App() {
       <section className={`screen home-screen ${view === 'home' && !teacherView ? 'show' : 'hide'}`}>
         <header className="topbar">
           <div className="topbar-left">
-            <button className="no-touch-btn" onClick={() => transition('vault')} aria-label="Zona restringida">
-              <span className="no-touch-icon">⚠</span>
-              <span className="no-touch-text">NO TOCAR</span>
+            <button className="secret-btn" onClick={() => transition('vault')} aria-label="Botón secreto">
+              <span className="secret-btn-text">BOTÓN SECRETO</span>
             </button>
           </div>
           <div className="topbar-right">
