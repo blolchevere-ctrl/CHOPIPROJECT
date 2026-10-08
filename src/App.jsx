@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from './lib/supabase';
+import Vault from './games/Vault';
 
 const branches = [
   { id: 'math', label: 'Matemática', icon: '∑', color: '#a78bfa', categories: [
@@ -663,20 +664,7 @@ function App() {
 
       {/* VAULT (NO TOCAR) */}
       <section className={`screen vault-screen ${view === 'vault' && !teacherView ? 'show' : 'hide'}`}>
-        <header className="sub-header">
-          <button className="back-btn" onClick={goHome}><span>←</span> Volver</button>
-          <div className="sub-title">
-            <span className="sub-eyebrow">ZONA RESTRINGIDA</span>
-            <h2>Material, Juegos y Problemas</h2>
-          </div>
-        </header>
-        <div className="vault-body">
-          <div className="vault-placeholder">
-            <span className="vault-emoji">📂</span>
-            <p className="vault-title">Próximamente</p>
-            <p className="vault-sub">Aquí se subirá el material, juegos y problemas.</p>
-          </div>
-        </div>
+        {view === 'vault' && !teacherView && <Vault goHome={goHome} activeUni={activeUni} />}
       </section>
 
       {/* TRANSITION */}
